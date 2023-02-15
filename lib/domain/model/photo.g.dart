@@ -26,7 +26,7 @@ Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
       collections: json['collections'] as int,
       likes: json['likes'] as int,
       comments: json['comments'] as int,
-      userId: json['userId'] as int,
+      userId: json['userId'] as int?,
       user: json['user'] as String,
       userImageURL: json['userImageURL'] as String,
     );

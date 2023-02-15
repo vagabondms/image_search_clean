@@ -23,7 +23,7 @@ class Photo {
   final int collections;
   final int likes;
   final int comments;
-  final int userId;
+  int? userId;
   final String user;
   final String userImageURL;
 
@@ -47,7 +47,7 @@ class Photo {
     required this.collections,
     required this.likes,
     required this.comments,
-    required this.userId,
+    this.userId,
     required this.user,
     required this.userImageURL,
   });
