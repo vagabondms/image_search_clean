@@ -30,15 +30,19 @@ class _PhotoScreenState extends State<PhotoScreen> {
             body: CustomScrollView(
               slivers: <Widget>[
                 /// Appbar background
-                SliverAppBar(
+                const SliverAppBar(
                   backgroundColor: Colors.red,
-                  title: const Text('hi'),
                   elevation: 0,
-                  expandedHeight: 300,
+                  pinned: true,
+                  centerTitle: false,
+                  stretch: true,
+                  toolbarHeight: 0,
+                  expandedHeight: 300.0,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
+                    stretchModes: [StretchMode.zoomBackground],
+                    background: Image(
+                      image: AssetImage('assets/images/feature.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
