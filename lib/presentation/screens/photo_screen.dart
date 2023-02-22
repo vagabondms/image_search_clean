@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_search/data/repository/image_repository_impl.dart';
 import 'package:image_search/domain/model/response/photo_response.dart';
 import 'package:image_search/domain/repositories/image_repository.dart';
+import 'package:image_search/presentation/widgets/card.dart';
+import 'package:image_search/presentation/widgets/search_bar.dart';
 
 class PhotoScreen extends StatefulWidget {
   const PhotoScreen({Key? key}) : super(key: key);
@@ -29,45 +31,15 @@ class _PhotoScreenState extends State<PhotoScreen> {
           return Scaffold(
             body: CustomScrollView(
               slivers: <Widget>[
-                /// Appbar background
-                const SliverAppBar(
-                  backgroundColor: Colors.red,
-                  elevation: 0,
+                //  search bar
+                SliverPersistentHeader(
                   pinned: true,
-                  centerTitle: false,
-                  stretch: true,
-                  toolbarHeight: 0,
-                  expandedHeight: 300.0,
-                  flexibleSpace: FlexibleSpaceBar(
-                    stretchModes: [StretchMode.zoomBackground],
-                    background: Image(
-                      image: AssetImage('assets/images/feature.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-
-                /// search bar
-                const SliverAppBar(
-                  title: Text('hi'),
-                  pinned: true,
-                  elevation: 0,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(-10.0),
-                    child: SizedBox(),
-                  ),
-                  flexibleSpace: TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Password',
-                    ),
-                  ),
+                  delegate: MyHeaderDelegate(),
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return Card(
+                      return PhotoCard(
                         imageUrl: snapshot.data!.hits[index].largeImageURL,
                       );
                     },
@@ -78,29 +50,5 @@ class _PhotoScreenState extends State<PhotoScreen> {
             ),
           );
         });
-  }
-}
-
-class Card extends StatelessWidget {
-  const Card({
-    super.key,
-    required this.imageUrl,
-  });
-
-  final String imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: 200,
-          child: Image.network(imageUrl, fit: BoxFit.fitWidth),
-        ),
-      ),
-    );
   }
 }
