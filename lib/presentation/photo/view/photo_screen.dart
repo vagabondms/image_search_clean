@@ -6,8 +6,24 @@ import 'package:image_search/domain/repositories/image_repository.dart';
 import 'package:image_search/presentation/widgets/card.dart';
 import 'package:image_search/presentation/widgets/search_bar.dart';
 
+class PhotoPage extends StatelessWidget {
+  const PhotoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PhotoScreen();
+  }
+
+  static Route<void> route() =>
+      MaterialPageRoute<void>(builder: (_) => const PhotoPage());
+}
+
 class PhotoScreen extends StatefulWidget {
   const PhotoScreen({Key? key}) : super(key: key);
+
+  static Route<void> route() {
+    return MaterialPageRoute<void>(builder: (_) => const PhotoScreen());
+  }
 
   @override
   State<PhotoScreen> createState() => _PhotoScreenState();
