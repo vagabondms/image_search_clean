@@ -21,20 +21,31 @@ class _PhotoScreenState extends State<PhotoScreen> {
     super.initState();
   }
 
+  String keyword = '';
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<PhotoResponse>(
         future: _imageRepository.searchImages(
-            dotenv.env['key'] ?? '', 'apple', 'photo'),
+            dotenv.env['key'] ?? '', keyword, 'photo'),
         builder: (BuildContext context, AsyncSnapshot<PhotoResponse> snapshot) {
           if (!snapshot.hasData) return Container();
           return Scaffold(
             body: CustomScrollView(
               slivers: <Widget>[
                 //  search bar
-                SliverPersistentHeader(
+                const SliverPersistentHeader(
                   pinned: true,
-                  delegate: MyHeaderDelegate(),
+                  delegate: BackgroundHeaderDelegate(
+                    searchBarHeight: 100,
+                    backgroundHeight: 300,
+                    minBackgroundHeight: 50,
+                    background: Image(
+                      image: AssetImage('assets/images/feature.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    child: SearchBar(),
+                  ),
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(

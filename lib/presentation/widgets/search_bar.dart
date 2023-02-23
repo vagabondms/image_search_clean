@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -27,33 +28,42 @@ class SearchBar extends StatelessWidget {
   }
 }
 
-class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
+class BackgroundHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const BackgroundHeaderDelegate({
+    required this.searchBarHeight,
+    required this.backgroundHeight,
+    required this.minBackgroundHeight,
+    required this.background,
+    required this.child,
+  });
+
+  final double searchBarHeight;
+  final double backgroundHeight;
+  final double minBackgroundHeight;
+  final Widget child;
+  final Widget background;
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final progress = shrinkOffset / (maxExtent - searchBarHeight);
-    final double currentExtent = math.max(
-      minBackgroundHeight,
-      backgroundHeight - shrinkOffset,
-    );
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minHeight: 400,
-        maxHeight: 800,
+      constraints: BoxConstraints(
+        minHeight: searchBarHeight + backgroundHeight,
       ),
       child: Column(
         children: [
           Flexible(
             child: FlexibleSpaceBar.createSettings(
               minExtent: 0,
-              maxExtent: 300,
-              currentExtent: currentExtent,
-              child: const FlexibleSpaceBar(
-                background: Image(
-                  image: AssetImage('assets/images/feature.png'),
-                  fit: BoxFit.cover,
-                ),
+              maxExtent: backgroundHeight,
+              currentExtent: math.max(
+                minBackgroundHeight,
+                backgroundHeight - shrinkOffset,
+              ),
+              child: FlexibleSpaceBar(
+                background: background,
               ),
             ),
           ),
@@ -62,22 +72,18 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
             height: searchBarHeight,
             color: Color.lerp(Colors.red, Colors.blue, progress),
             alignment: Alignment.center,
-            child: const SearchBar(),
+            child: child,
           ),
         ],
       ),
     );
   }
 
-  final double searchBarHeight = 100;
-  final double backgroundHeight = 300;
-  final double minBackgroundHeight = 50;
+  @override
+  double get maxExtent => searchBarHeight + backgroundHeight;
 
   @override
-  double get maxExtent => 400;
-
-  @override
-  double get minExtent => 150;
+  double get minExtent => searchBarHeight + minBackgroundHeight;
 
   @override
   OverScrollHeaderStretchConfiguration get stretchConfiguration =>
