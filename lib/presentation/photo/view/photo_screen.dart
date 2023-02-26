@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_search/data/repository/image_repository_impl.dart';
-import 'package:image_search/domain/model/response/photo_response.dart';
 import 'package:image_search/domain/repositories/image_repository.dart';
+import 'package:image_search/presentation/photo/bloc/photo_bloc.dart';
 import 'package:image_search/presentation/widgets/card.dart';
 import 'package:image_search/presentation/widgets/search_bar.dart';
 
@@ -11,71 +12,73 @@ class PhotoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PhotoScreen();
+    return PhotoScreen();
   }
 
   static Route<void> route() =>
       MaterialPageRoute<void>(builder: (_) => const PhotoPage());
 }
 
-class PhotoScreen extends StatefulWidget {
-  const PhotoScreen({Key? key}) : super(key: key);
+class PhotoScreen extends StatelessWidget {
+  PhotoScreen({Key? key}) : super(key: key);
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const PhotoScreen());
+    return MaterialPageRoute<void>(builder: (_) => PhotoScreen());
   }
 
-  @override
-  State<PhotoScreen> createState() => _PhotoScreenState();
-}
-
-class _PhotoScreenState extends State<PhotoScreen> {
   final ImageRepository _imageRepository = ImageRepositoryImpl();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   String keyword = '';
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<PhotoResponse>(
-        future: _imageRepository.searchImages(
-            dotenv.env['key'] ?? '', keyword, 'photo'),
-        builder: (BuildContext context, AsyncSnapshot<PhotoResponse> snapshot) {
-          if (!snapshot.hasData) return Container();
-          return Scaffold(
-            body: CustomScrollView(
-              slivers: <Widget>[
-                //  search bar
-                const SliverPersistentHeader(
-                  pinned: true,
-                  delegate: BackgroundHeaderDelegate(
-                    searchBarHeight: 100,
-                    backgroundHeight: 300,
-                    minBackgroundHeight: 50,
-                    background: Image(
-                      image: AssetImage('assets/images/feature.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    child: SearchBar(),
-                  ),
+    return Scaffold(
+      body: BlocProvider(
+        create: (_) =>
+            PhotoBloc(imageRepository: _imageRepository)..add(PhotoFetched()),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            //  search bar
+            const SliverPersistentHeader(
+              pinned: true,
+              delegate: BackgroundHeaderDelegate(
+                searchBarHeight: 100,
+                backgroundHeight: 300,
+                minBackgroundHeight: 50,
+                background: Image(
+                  image: AssetImage('assets/images/feature.png'),
+                  fit: BoxFit.cover,
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return PhotoCard(
-                        imageUrl: snapshot.data!.hits[index].largeImageURL,
-                      );
-                    },
-                    childCount: snapshot.data!.hits.length,
-                  ),
-                ),
-              ],
+                child: SearchBar(),
+              ),
             ),
-          );
-        });
+            BlocBuilder<PhotoBloc, PhotoState>(builder: (
+              BuildContext context,
+              PhotoState state,
+            ) {
+              switch (state.status) {
+                case PhotoStatus.initial:
+                  return SliverToBoxAdapter(child: Container());
+                case PhotoStatus.success:
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        return PhotoCard(
+                          imageUrl: state.hits[index].largeImageURL,
+                        );
+                      },
+                      childCount: state.hits.length,
+                    ),
+                  );
+                case PhotoStatus.failure:
+                  return SliverToBoxAdapter(child: Container());
+                default:
+                  return SliverToBoxAdapter(child: Container());
+              }
+            }),
+          ],
+        ),
+      ),
+    );
   }
 }
