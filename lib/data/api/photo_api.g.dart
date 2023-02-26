@@ -25,12 +25,14 @@ class _PhotoApi implements PhotoApi {
     key,
     q,
     imageType,
+    page,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'key': key,
       r'q': q,
       r'image_type': imageType,
+      r'page': page,
     };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};

@@ -11,7 +11,8 @@ class ImageRepositoryImpl implements ImageRepository {
     String key,
     String q,
     String imageType,
+    String page,
   ) async {
-    return PhotoApi(photoDio).searchImages(key, q, imageType);
+    return PhotoApi(photoDio).searchImages(key, q, imageType, page);
   }
 }

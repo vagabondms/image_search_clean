@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:image_search/domain/model/photo.dart';
 import 'package:image_search/domain/model/response/photo_response.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -14,5 +13,6 @@ abstract class PhotoApi {
     @Query('key') String key,
     @Query('q') String q,
     @Query('image_type') String imageType,
+    @Query('page') String page,
   );
 }

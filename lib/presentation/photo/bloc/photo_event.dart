@@ -6,4 +6,11 @@ abstract class PhotoEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PhotoFetched extends PhotoEvent {}
+class FetchPhotos extends PhotoEvent {}
+
+class SearchPhotos extends PhotoEvent {
+  SearchPhotos({
+    required this.keyword,
+  });
+  final String keyword;
+}
