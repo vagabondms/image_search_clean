@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_search/data/repository/image_repository_impl.dart';
 import 'package:image_search/domain/repositories/image_repository.dart';
 import 'package:image_search/presentation/photo/bloc/photo_bloc.dart';
-import 'package:image_search/presentation/photo/view/bottom_loader.dart';
 import 'package:image_search/presentation/widgets/background_header_delegate.dart';
 import 'package:image_search/presentation/widgets/card.dart';
+import 'package:image_search/presentation/widgets/load_more.dart';
 import 'package:image_search/presentation/widgets/search_bar.dart';
 
 class PhotoPage extends StatelessWidget {
@@ -37,12 +37,10 @@ class PhotoScreen extends StatefulWidget {
 }
 
 class _PhotoScreenState extends State<PhotoScreen> {
-  late final ScrollController _scrollController = ScrollController();
   final scrollTop = GlobalKey();
 
   @override
   void initState() {
-    _scrollController.addListener(_onScroll);
     super.initState();
   }
 
@@ -54,7 +52,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
       body: SafeArea(
         top: false,
         child: CustomScrollView(
-          controller: _scrollController,
+          controller: PrimaryScrollController.of(context),
           slivers: <Widget>[
             //  search bar
             SliverPersistentHeader(
@@ -106,19 +104,11 @@ class _PhotoScreenState extends State<PhotoScreen> {
                   );
               }
             }),
-            BlocSelector<PhotoBloc, PhotoState, PhotoStatus>(
-              selector: (state) {
-                return state.status;
-              },
-              builder: (BuildContext context, PhotoStatus state) {
-                return SliverOffstage(
-                  offstage: state != PhotoStatus.success,
-                  sliver: const SliverToBoxAdapter(
-                    child: BottomLoader(),
-                  ),
-                );
-              },
-            )
+            SliverToBoxAdapter(
+              child: LoadMore(onLoadMore: () {
+                context.read<PhotoBloc>().add(FetchPhotos());
+              }),
+            ),
           ],
         ),
       ),
@@ -139,16 +129,5 @@ class _PhotoScreenState extends State<PhotoScreen> {
     final yPosition = (box as RenderBox).localToGlobal(Offset.zero).dy;
 
     return yPosition < 0;
-  }
-
-  void _onScroll() {
-    if (_isBottom) context.read<PhotoBloc>().add(FetchPhotos());
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 1);
   }
 }
