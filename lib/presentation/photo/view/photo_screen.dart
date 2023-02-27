@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_search/data/repository/image_repository_impl.dart';
 import 'package:image_search/domain/repositories/image_repository.dart';
 import 'package:image_search/presentation/photo/bloc/photo_bloc.dart';
 import 'package:image_search/presentation/photo/view/bottom_loader.dart';
+import 'package:image_search/presentation/widgets/background_header_delegate.dart';
 import 'package:image_search/presentation/widgets/card.dart';
 import 'package:image_search/presentation/widgets/search_bar.dart';
 
@@ -19,16 +19,17 @@ class PhotoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (_) => PhotoBloc(imageRepository: _imageRepository),
-        child: PhotoScreen());
+      create: (_) => PhotoBloc(imageRepository: _imageRepository),
+      child: const PhotoScreen(),
+    );
   }
 }
 
 class PhotoScreen extends StatefulWidget {
-  PhotoScreen({Key? key}) : super(key: key);
+  const PhotoScreen({Key? key}) : super(key: key);
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => PhotoScreen());
+    return MaterialPageRoute<void>(builder: (_) => const PhotoScreen());
   }
 
   @override
@@ -66,16 +67,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
                   image: AssetImage('assets/images/feature.png'),
                   fit: BoxFit.cover,
                 ),
-                child: SearchBar(
-                  onSubmitted: (String value) {
-                    if (scrollTop.currentContext != null &&
-                        _isVisible(scrollTop.currentContext!)) {
-                      Scrollable.ensureVisible(scrollTop.currentContext!,
-                          duration: const Duration(milliseconds: 150));
-                    }
-                    context.read<PhotoBloc>().add(SearchPhotos(keyword: value));
-                  },
-                ),
+                child: SearchBar(onSubmitted: handleKeywordSubmitted),
               ),
             ),
             SliverToBoxAdapter(
@@ -90,8 +82,6 @@ class _PhotoScreenState extends State<PhotoScreen> {
             ) {
               switch (state.status) {
                 case PhotoStatus.initial:
-
-                  ///todo:
                   return const SliverToBoxAdapter(
                     child: Center(
                       child: Text('검색어를 입력해주세요'),
@@ -133,6 +123,15 @@ class _PhotoScreenState extends State<PhotoScreen> {
         ),
       ),
     );
+  }
+
+  void handleKeywordSubmitted(String value) {
+    if (scrollTop.currentContext != null &&
+        _isVisible(scrollTop.currentContext!)) {
+      Scrollable.ensureVisible(scrollTop.currentContext!,
+          duration: const Duration(milliseconds: 150));
+    }
+    context.read<PhotoBloc>().add(SearchPhotos(keyword: value));
   }
 
   bool _isVisible(BuildContext currentContext) {
