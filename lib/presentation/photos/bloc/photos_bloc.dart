@@ -7,10 +7,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_search/domain/model/photo.dart';
 import 'package:image_search/domain/model/response/photo_response.dart';
 import 'package:image_search/domain/repositories/image_repository.dart';
+import 'package:image_search/logger.dart';
 import 'package:meta/meta.dart';
 
-part 'photo_event.dart';
-part 'photo_state.dart';
+part 'photos_event.dart';
+part 'photos_state.dart';
 
 class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
   final ImageRepository imageRepository;
@@ -55,7 +56,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     try {
       final PhotoResponse photoResponse =
           await _fetchPhotos((state.hits.length ~/ _perPage) + 1);
-
+      logger.d(photoResponse.hits.first.largeImageURL);
       return emit(state.copyWith(
         status: PhotoStatus.success,
         total: photoResponse.total,
@@ -69,7 +70,6 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   /// legnth가 들어오면 loadMore;
   Future<PhotoResponse> _fetchPhotos([int? page]) async {
-    print(page);
     return await imageRepository.searchImages(
       dotenv.env['key'] ?? '',
       keyword,

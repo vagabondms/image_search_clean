@@ -1,4 +1,4 @@
-part of 'photo_bloc.dart';
+part of 'photos_bloc.dart';
 
 @immutable
 abstract class PhotoEvent extends Equatable {

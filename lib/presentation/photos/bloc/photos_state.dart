@@ -1,4 +1,4 @@
-part of 'photo_bloc.dart';
+part of 'photos_bloc.dart';
 
 enum PhotoStatus { initial, success, failure }
 

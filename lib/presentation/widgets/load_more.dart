@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_search/presentation/photo/view/bottom_loader.dart';
+import 'package:image_search/presentation/photos/view/bottom_loader.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 @immutable

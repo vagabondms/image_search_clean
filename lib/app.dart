@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_search/presentation/photo/photo.dart';
+import 'package:image_search/presentation/photos/photos.dart';
 import 'package:image_search/presentation/splash/splash.dart';
 
 class App extends StatefulWidget {
@@ -46,7 +46,7 @@ class _AppViewState extends State<AppView> {
             case '/':
               return SplashPage.route();
             case '/photo':
-              return PhotoPage.route();
+              return PhotosPage.route();
             default:
               return SplashPage.route();
           }
